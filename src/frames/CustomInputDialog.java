@@ -5,6 +5,7 @@
  */
 package frames;
 
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +24,7 @@ import javax.swing.JTextField;
  * @author delmarw
  */
 public class CustomInputDialog extends JDialog implements ActionListener, PropertyChangeListener {
+    private static final String BTN_STRING = "Enter";
     private String typedText = null;
     private JTextField textField;
     private JOptionPane optionPane;
@@ -55,21 +57,24 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
         //Creates a dialog with the specified title, owner Frame and modality.
         super(aFrame, title, true);//modality will default to true for this class
         
+        //Sets length of text field for user input
         textField = new JTextField(len);
 
         //Create an array of the text and components to be displayed.
-
         Object[] array = {prompt, textField};
 
-        //Create an array specifying the number of dialog buttons
-        //and their text.
-        //Object[] options = {btnString1, btnString2};
-
+        Object[] options = {BTN_STRING};
+        
         //Create the JOptionPane.
-        optionPane = new JOptionPane(array, JOptionPane.QUESTION_MESSAGE);
+        optionPane = new JOptionPane(array, JOptionPane.QUESTION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, options);
 
         //Make this dialog display it.
         setContentPane(optionPane);
+        
+        //Set dialogue properties
+        setLocationRelativeTo(getParent());
+        setResizable(false);
+        setMinimumSize(new Dimension(300,200));
 
         //Handle window closing correctly.
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -130,14 +135,27 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
             //property change event will be fired.
             optionPane.setValue(
                     JOptionPane.UNINITIALIZED_VALUE);
-            //I don't like this. I shouldn't have to cast to int
-            if (JOptionPane.OK_OPTION == (int)value) {
-                    typedText = textField.getText();
+            //Checks if button pressed
+            if (BTN_STRING.equals(value)) {
+                typedText = textField.getText();
                 String ucText = typedText.toUpperCase();
                 if (isAlpha(ucText)) {
                     //we're done; clear and dismiss the dialog
                     clearAndHide();
-                } else {
+                } 
+                else if (ucText.isEmpty()){
+                    //textfield was empty
+                    textField.selectAll();
+                    JOptionPane.showMessageDialog(CustomInputDialog.this,
+                                    "Looks like you didn't enter anything.\n"
+                                    + "Please enter "
+                                    + "your name.",
+                                    "Try again",
+                                    JOptionPane.ERROR_MESSAGE);
+                    typedText = null;
+                    textField.requestFocusInWindow();
+                }
+                else {
                     //text was invalid
                     textField.selectAll();
                     JOptionPane.showMessageDialog(CustomInputDialog.this,

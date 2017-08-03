@@ -115,6 +115,7 @@ public class GameFrame extends javax.swing.JFrame {
         String input;
         //input = (String)JOptionPane.showInputDialog(this, "What is your name?", "Name", JOptionPane.QUESTION_MESSAGE, null, null, null);
         CustomInputDialog customDialog = new CustomInputDialog(this, "What is your name?", "Name", 5);
+        customDialog.setLocationRelativeTo(this);
         customDialog.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
