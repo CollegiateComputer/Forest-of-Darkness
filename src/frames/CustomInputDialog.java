@@ -25,10 +25,7 @@ import javax.swing.JTextField;
 public class CustomInputDialog extends JDialog implements ActionListener, PropertyChangeListener {
     private String typedText = null;
     private JTextField textField;
-
     private JOptionPane optionPane;
-
-    private final String btnString1 = "Enter";
 
     /**
      * Returns null if the typed string was invalid;
@@ -107,7 +104,7 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
      * @param e */
     @Override
     public void actionPerformed(ActionEvent e) {
-        optionPane.setValue("OK");
+        optionPane.setValue(optionPane.getValue());
     }
 
     /** This method reacts to state changes in the option pane.
@@ -133,8 +130,8 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
             //property change event will be fired.
             optionPane.setValue(
                     JOptionPane.UNINITIALIZED_VALUE);
-
-            if ("OK".equals(value)) {
+            //I don't like this. I shouldn't have to cast to int
+            if (JOptionPane.OK_OPTION == (int)value) {
                     typedText = textField.getText();
                 String ucText = typedText.toUpperCase();
                 if (isAlpha(ucText)) {
