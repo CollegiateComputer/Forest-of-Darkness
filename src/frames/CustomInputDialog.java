@@ -5,7 +5,6 @@
  */
 package frames;
 
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +24,7 @@ import javax.swing.JTextField;
  */
 public class CustomInputDialog extends JDialog implements ActionListener, PropertyChangeListener {
     private static final String BTN_STRING = "Enter";
+    private static final String BTN_String = "Cancel";
     private String typedText = null;
     private JTextField textField;
     private JOptionPane optionPane;
@@ -46,6 +46,20 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
      */
     private boolean isAlpha(String text){
         return text.matches("[a-zA-Z]+");
+    }
+    
+    /**
+     * Prepares and displays the dialog
+     */
+    private void prepare(){
+        //Pack the dialog components
+        pack();
+        //Set dialog properties
+        setResizable(false);
+        //setMinimumSize(new Dimension(300,200));
+        setLocationRelativeTo(getParent());
+        //create the dialogue
+        setVisible(true);
     }
 
     /** Creates the reusable dialog.
@@ -71,11 +85,6 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
         //Make this dialog display it.
         setContentPane(optionPane);
         
-        //Set dialogue properties
-        setLocationRelativeTo(getParent());
-        setResizable(false);
-        setMinimumSize(new Dimension(300,200));
-
         //Handle window closing correctly.
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -103,6 +112,9 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
 
         //Register an event handler that reacts to option pane state changes.
         optionPane.addPropertyChangeListener(this);
+        
+        //see prepare
+        prepare();
     }
 
     /** This method handles events for the text field.
@@ -141,7 +153,7 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
                 String ucText = typedText.toUpperCase();
                 if (isAlpha(ucText)) {
                     //we're done; clear and dismiss the dialog
-                    clearAndHide();
+                    dispose();
                 } 
                 else if (ucText.isEmpty()){
                     //textfield was empty
@@ -168,14 +180,15 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
                     typedText = null;
                     textField.requestFocusInWindow();
                 }
-            } else { //user closed dialog or clicked cancel
+            } else {
+                //user closed dialog or clicked cancel
                 typedText = null;
                 clearAndHide();
             }
         }
     }
 
-    /** This method clears the dialog and hides it. */
+    /** This method clears the dialog and disposes of it. */
     public void clearAndHide() {
         textField.setText(null);
         setVisible(false);
