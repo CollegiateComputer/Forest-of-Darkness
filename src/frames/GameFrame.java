@@ -113,7 +113,9 @@ public class GameFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String input;
-        input = (String)JOptionPane.showInputDialog(this, "What is your name?", "Name", JOptionPane.QUESTION_MESSAGE, null, null, null);
+        //input = (String)JOptionPane.showInputDialog(this, "What is your name?", "Name", JOptionPane.QUESTION_MESSAGE, null, null, null);
+        CustomInputDialog customDialog = new CustomInputDialog(this, "What is your name?", "Name", 5);
+        //customDialog.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

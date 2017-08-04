@@ -22,15 +22,12 @@ import javax.swing.JTextField;
  *
  * @author delmarw
  */
-public class CustomDialog extends JDialog implements ActionListener, PropertyChangeListener {
+public class CustomInputDialog extends JDialog implements ActionListener, PropertyChangeListener {
+    private static final String BTN_STRING = "Enter";
+    private static final String BTN_String = "Cancel";
     private String typedText = null;
     private JTextField textField;
-
-    private String magicWord;
     private JOptionPane optionPane;
-
-    private String btnString1 = "Enter";
-    private String btnString2 = "Cancel";
 
     /**
      * Returns null if the typed string was invalid;
@@ -40,50 +37,65 @@ public class CustomDialog extends JDialog implements ActionListener, PropertyCha
     public String getValidatedText() {
         return typedText;
     }
+    
+    /**
+     * Returns true if all characters of the typed string are
+     * alphabetical; otherwise, returns false.
+     * @param text
+     * @return 
+     */
+    private boolean isAlpha(String text){
+        return text.matches("[a-zA-Z]+");
+    }
+    
+    /**
+     * Prepares and displays the dialog
+     */
+    private void prepare(){
+        //Pack the dialog components
+        pack();
+        //Set dialog properties
+        setResizable(false);
+        //setMinimumSize(new Dimension(300,200));
+        setLocationRelativeTo(getParent());
+        //create the dialogue
+        setVisible(true);
+    }
 
     /** Creates the reusable dialog.
-     * @param aFrame
-     * @param aWord */
-    public CustomDialog(Frame aFrame, String aWord) {
-        super(aFrame, true);
-
-        magicWord = aWord.toUpperCase();
-        setTitle("Quiz");
-
-        textField = new JTextField(10);
+     * @param aFrame - owner frame
+     * @param title - title for dialog
+     * @param prompt - prompt for dialog
+     * @param len - length of text input field */
+    public CustomInputDialog(Frame aFrame, String prompt, String title, int len) {
+        //Creates a dialog with the specified title, owner Frame and modality.
+        super(aFrame, title, true);//modality will default to true for this class
+        
+        //Sets length of text field for user input
+        textField = new JTextField(len);
 
         //Create an array of the text and components to be displayed.
-        String msgString1 = "What was Dr. SEUSS's real last name?";
-        String msgString2 = "(The answer is \"" + magicWord
-                              + "\".)";
-        Object[] array = {msgString1, msgString2, textField};
+        Object[] array = {prompt, textField};
 
-        //Create an array specifying the number of dialog buttons
-        //and their text.
-        Object[] options = {btnString1, btnString2};
-
+        Object[] options = {BTN_STRING};
+        
         //Create the JOptionPane.
-        optionPane = new JOptionPane(array,
-                                    JOptionPane.QUESTION_MESSAGE,
-                                    JOptionPane.YES_NO_OPTION,
-                                    null,
-                                    options,
-                                    options[0]);
+        optionPane = new JOptionPane(array, JOptionPane.QUESTION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, options);
 
         //Make this dialog display it.
         setContentPane(optionPane);
-
+        
         //Handle window closing correctly.
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent we) {
-                /*
-                 * Instead of directly closing the window,
-                 * we're going to change the JOptionPane's
-                 * value property.
-                 */
-                    optionPane.setValue(JOptionPane.CLOSED_OPTION);
+            @Override
+            public void windowClosing(WindowEvent we) {
+            /*
+             * Instead of directly closing the window,
+             * we're going to change the JOptionPane's
+             * value property.
+             */
+                optionPane.setValue(JOptionPane.CLOSED_OPTION);
             }
         });
 
@@ -100,13 +112,16 @@ public class CustomDialog extends JDialog implements ActionListener, PropertyCha
 
         //Register an event handler that reacts to option pane state changes.
         optionPane.addPropertyChangeListener(this);
+        
+        //see prepare
+        prepare();
     }
 
     /** This method handles events for the text field.
      * @param e */
     @Override
     public void actionPerformed(ActionEvent e) {
-        optionPane.setValue(btnString1);
+        optionPane.setValue(optionPane.getValue());
     }
 
     /** This method reacts to state changes in the option pane.
@@ -132,35 +147,48 @@ public class CustomDialog extends JDialog implements ActionListener, PropertyCha
             //property change event will be fired.
             optionPane.setValue(
                     JOptionPane.UNINITIALIZED_VALUE);
-
-            if (btnString1.equals(value)) {
-                    typedText = textField.getText();
+            //Checks if button pressed
+            if (BTN_STRING.equals(value)) {
+                typedText = textField.getText();
                 String ucText = typedText.toUpperCase();
-                if (magicWord.equals(ucText)) {
+                if (isAlpha(ucText)) {
                     //we're done; clear and dismiss the dialog
-                    clearAndHide();
-                } else {
-                    //text was invalid
+                    dispose();
+                } 
+                else if (ucText.isEmpty()){
+                    //textfield was empty
                     textField.selectAll();
-                    JOptionPane.showMessageDialog(
-                                    CustomDialog.this,
-                                    "Sorry, \"" + typedText + "\" "
-                                    + "isn't a valid response.\n"
+                    JOptionPane.showMessageDialog(CustomInputDialog.this,
+                                    "Looks like you didn't enter anything.\n"
                                     + "Please enter "
-                                    + magicWord + ".",
+                                    + "your name.",
                                     "Try again",
                                     JOptionPane.ERROR_MESSAGE);
                     typedText = null;
                     textField.requestFocusInWindow();
                 }
-            } else { //user closed dialog or clicked cancel
+                else {
+                    //text was invalid
+                    textField.selectAll();
+                    JOptionPane.showMessageDialog(CustomInputDialog.this,
+                                    "Sorry, \"" + typedText + "\" "
+                                    + "isn't a valid response.\n"
+                                    + "Please enter "
+                                    + "your name.",
+                                    "Try again",
+                                    JOptionPane.ERROR_MESSAGE);
+                    typedText = null;
+                    textField.requestFocusInWindow();
+                }
+            } else {
+                //user closed dialog or clicked cancel
                 typedText = null;
                 clearAndHide();
             }
         }
     }
 
-    /** This method clears the dialog and hides it. */
+    /** This method clears the dialog and disposes of it. */
     public void clearAndHide() {
         textField.setText(null);
         setVisible(false);
