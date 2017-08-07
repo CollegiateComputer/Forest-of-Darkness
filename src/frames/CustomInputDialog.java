@@ -23,8 +23,8 @@ import javax.swing.JTextField;
  * @author delmarw
  */
 public class CustomInputDialog extends JDialog implements ActionListener, PropertyChangeListener {
-    private static final String BTN_STRING = "Enter";
-    private static final String BTN_String = "Cancel";
+    private static final String BTN_STRING1 = "Enter";
+    private static final String BTN_STRING2 = "Cancel";
     private String typedText = null;
     private JTextField textField;
     private JOptionPane optionPane;
@@ -77,7 +77,7 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
         //Create an array of the text and components to be displayed.
         Object[] array = {prompt, textField};
 
-        Object[] options = {BTN_STRING};
+        Object[] options = {BTN_STRING1, BTN_STRING2};
         
         //Create the JOptionPane.
         optionPane = new JOptionPane(array, JOptionPane.QUESTION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, options);
@@ -148,7 +148,7 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
             optionPane.setValue(
                     JOptionPane.UNINITIALIZED_VALUE);
             //Checks if button pressed
-            if (BTN_STRING.equals(value)) {
+            if (BTN_STRING1.equals(value)) {
                 typedText = textField.getText();
                 String ucText = typedText.toUpperCase();
                 if (isAlpha(ucText)) {
@@ -180,17 +180,20 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
                     typedText = null;
                     textField.requestFocusInWindow();
                 }
-            } else {
-                //user closed dialog or clicked cancel
+            }
+            else if (BTN_STRING2.equals(value)) {
+                //user clicked cancel
                 typedText = null;
-                clearAndHide();
+                this.dispose();
+            }
+            else {
             }
         }
     }
 
     /** This method clears the dialog and disposes of it. */
-    public void clearAndHide() {
+    /*public void clearAndHide() {
         textField.setText(null);
         setVisible(false);
-    }    
+    }*/    
 }
