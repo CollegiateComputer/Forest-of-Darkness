@@ -10,8 +10,28 @@ package frames;
  * @author delmarw
  */
 public class User {
-    private String name;
-    private String password;
+    private String userName;
+    private String charName;
+    
+    public User(String userName){
+        this.userName = userName;
+    }
+    
+    public void setUserName(String userName){
+        this.userName = userName;
+    }
+    
+    public String getUserName(){
+        return userName;
+    }
+    
+    public void setCharName(String charName){
+        this.charName = charName;
+    }
+    
+    public String getCharName(){
+        return charName;
+    }
     
     
 }

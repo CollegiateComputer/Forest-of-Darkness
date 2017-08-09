@@ -160,8 +160,7 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
                     textField.selectAll();
                     JOptionPane.showMessageDialog(CustomInputDialog.this,
                                     "Looks like you didn't enter anything.\n"
-                                    + "Please enter "
-                                    + "your name.",
+                                    + "Please enter your name.",
                                     "Try again",
                                     JOptionPane.ERROR_MESSAGE);
                     typedText = null;
@@ -173,20 +172,16 @@ public class CustomInputDialog extends JDialog implements ActionListener, Proper
                     JOptionPane.showMessageDialog(CustomInputDialog.this,
                                     "Sorry, \"" + typedText + "\" "
                                     + "isn't a valid response.\n"
-                                    + "Please enter "
-                                    + "your name.",
+                                    + "Please enter your name.",
                                     "Try again",
                                     JOptionPane.ERROR_MESSAGE);
                     typedText = null;
                     textField.requestFocusInWindow();
                 }
             }
-            else if (BTN_STRING2.equals(value)) {
-                //user clicked cancel
+            else {
                 typedText = null;
                 this.dispose();
-            }
-            else {
             }
         }
     }
